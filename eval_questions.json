@@ -1,0 +1,204 @@
+{
+  "evaluation_set": [
+    {
+      "id": 1,
+      "question": "What is RealSoft's main mission?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 7,
+      "expected_chunk_id": "c01862dcf8b8_p007_c001_6e1f0c99f9cb4570",
+      "category": "company_info"
+    },
+    {
+      "id": 2,
+      "question": "When was RealSoft founded?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 2,
+      "expected_chunk_id": "c01862dcf8b8_p002_c001_0f1dec901d3665a5",
+      "category": "company_info"
+    },
+    {
+      "id": 3,
+      "question": "What products does RealSoft offer?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 3,
+      "expected_chunk_id": "c01862dcf8b8_p003_c001_69e396cbb3faa260",
+      "category": "products"
+    },
+    {
+      "id": 4,
+      "question": "What is Al-Khwarizmi platform?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 3,
+      "expected_chunk_id": "c01862dcf8b8_p003_c001_69e396cbb3faa260",
+      "category": "products"
+    },
+    {
+      "id": 5,
+      "question": "How many years of experience does RealSoft have?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 2,
+      "expected_chunk_id": "c01862dcf8b8_p002_c001_0f1dec901d3665a5",
+      "category": "company_info"
+    },
+    {
+      "id": 6,
+      "question": "What statistical solutions does RealSoft provide?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 1,
+      "expected_chunk_id": "c01862dcf8b8_p001_c001_207e0b7cb98ae9d2",
+      "category": "services"
+    },
+    {
+      "id": 7,
+      "question": "What is RealSoft's vision?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 7,
+      "expected_chunk_id": "c01862dcf8b8_p007_c001_6e1f0c99f9cb4570",
+      "category": "company_info"
+    },
+    {
+      "id": 8,
+      "question": "Who is the Director of Jordan Meteorological Department?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 3,
+      "expected_chunk_id": "c01862dcf8b8_p003_c002_a589cbb2c2cb9c80",
+      "category": "testimonials"
+    },
+    {
+      "id": 9,
+      "question": "What countries does RealSoft operate in?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 8,
+      "expected_chunk_id": "c01862dcf8b8_p008_c001_4023955e4915ae02",
+      "category": "company_info"
+    },
+    {
+      "id": 10,
+      "question": "What is RealData Hub?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 3,
+      "expected_chunk_id": "c01862dcf8b8_p003_c001_69e396cbb3faa260",
+      "category": "products"
+    },
+    {
+      "id": 11,
+      "question": "What technology partners does RealSoft work with?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 10,
+      "expected_chunk_id": "c01862dcf8b8_p010_c001_d1a8e3753364bf01",
+      "category": "partners"
+    },
+    {
+      "id": 12,
+      "question": "What is Microsoft partnership about?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 10,
+      "expected_chunk_id": "c01862dcf8b8_p010_c001_d1a8e3753364bf01",
+      "category": "partners"
+    },
+    {
+      "id": 13,
+      "question": "What awards has RealSoft received from Union of Arab Statisticians?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 13,
+      "expected_chunk_id": "c01862dcf8b8_p013_c001_7a07eba52af0fa86",
+      "category": "awards"
+    },
+    {
+      "id": 14,
+      "question": "What is RealSoft's contact number in Jordan?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 5,
+      "expected_chunk_id": "c01862dcf8b8_p005_c001_6ef837367e1affcf",
+      "category": "contact"
+    },
+    {
+      "id": 15,
+      "question": "What is the FalconMap platform?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 3,
+      "expected_chunk_id": "c01862dcf8b8_p003_c001_69e396cbb3faa260",
+      "category": "products"
+    },
+    {
+      "id": 16,
+      "question": "What is RealSoft's approach to digital transformation?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 1,
+      "expected_chunk_id": "c01862dcf8b8_p001_c001_207e0b7cb98ae9d2",
+      "category": "services"
+    },
+    {
+      "id": 17,
+      "question": "Who is Dr. Diaa Awad Kazem?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 4,
+      "expected_chunk_id": "c01862dcf8b8_p004_c001_cbe676cb85e06eb6",
+      "category": "testimonials"
+    },
+    {
+      "id": 18,
+      "question": "What is the Ada'a product?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 3,
+      "expected_chunk_id": "c01862dcf8b8_p003_c001_69e396cbb3faa260",
+      "category": "products"
+    },
+    {
+      "id": 19,
+      "question": "What is Esri and what do they do?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 10,
+      "expected_chunk_id": "c01862dcf8b8_p010_c001_d1a8e3753364bf01",
+      "category": "partners"
+    },
+    {
+      "id": 20,
+      "question": "What is Mendix platform?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 10,
+      "expected_chunk_id": "c01862dcf8b8_p010_c002_d757caa606a613a8",
+      "category": "partners"
+    },
+    {
+      "id": 21,
+      "question": "What values does RealSoft have?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 7,
+      "expected_chunk_id": "c01862dcf8b8_p007_c001_6e1f0c99f9cb4570",
+      "category": "company_info"
+    },
+    {
+      "id": 22,
+      "question": "What is RealSoft's talent outsourcing service?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 1,
+      "expected_chunk_id": "c01862dcf8b8_p001_c001_207e0b7cb98ae9d2",
+      "category": "services"
+    },
+    {
+      "id": 23,
+      "question": "What is the 8th International Conference of the Union of Arab Statisticians?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 13,
+      "expected_chunk_id": "c01862dcf8b8_p013_c002_835a2cb93f3ee3f4",
+      "category": "awards"
+    },
+    {
+      "id": 24,
+      "question": "What is RealData Flow?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 3,
+      "expected_chunk_id": "c01862dcf8b8_p003_c001_69e396cbb3faa260",
+      "category": "products"
+    },
+    {
+      "id": 25,
+      "question": "What is SBM company?",
+      "expected_source": "The Content of RealSoft (1).pdf",
+      "expected_page": 11,
+      "expected_chunk_id": "c01862dcf8b8_p011_c001_777449ea6f011991",
+      "category": "partners"
+    }
+  ]
+}

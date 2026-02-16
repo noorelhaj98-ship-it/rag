@@ -110,6 +110,19 @@ EMBED_TIMEOUT = 120
 MAX_CONTEXT_CHARS_PER_CHUNK = 450
 MAX_CONTEXT_TOTAL_CHARS = 2400
 
+# ---- Hybrid Retrieval Config ----
+# Configurable retrieval parameters (env-driven)
+TOP_K_DENSE = int(os.environ.get("TOP_K_DENSE", "10"))        # Dense vector prefetch limit
+TOP_K_KEYWORD = int(os.environ.get("TOP_K_KEYWORD", "10"))    # Keyword/BM25 prefetch limit
+TOP_K_FINAL = int(os.environ.get("TOP_K_FINAL", "6"))         # Final results after fusion
+FUSION_TYPE = os.environ.get("FUSION_TYPE", "RRF").upper()    # RRF or SCORE_FUSION
+RRF_K = int(os.environ.get("RRF_K", "60"))                    # RRF ranking constant (default 60)
+
+# ---- Reranker Config ----
+RERANKER_ENABLED = os.environ.get("RERANKER_ENABLED", "true").lower() == "true"
+RERANKER_TOP_K = int(os.environ.get("RERANKER_TOP_K", "20"))  # Candidates to rerank
+RERANKER_MODEL = os.environ.get("RERANKER_MODEL", "cross-encoder")  # cross-encoder or colbert
+
 # ---- Rate Limiter Setup ----
 # Default: 10 requests per minute per IP, configurable via env
 RATE_LIMIT = os.environ.get("RATE_LIMIT", "10/minute")
@@ -274,6 +287,82 @@ class SimpleBM25:
 bm25 = SimpleBM25()
 
 
+# ---- Simple Cross-Encoder Reranker ----
+class SimpleCrossEncoderReranker:
+    """
+    Simple cross-encoder style reranker using keyword overlap and semantic signals.
+    This is a lightweight implementation - for production, use a real cross-encoder model.
+    """
+    
+    def __init__(self):
+        self.use_transformer = False
+        try:
+            from sentence_transformers import CrossEncoder
+            # Try to load a small cross-encoder model
+            self.model = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+            self.use_transformer = True
+            print("[reranker] Loaded cross-encoder model")
+        except Exception as e:
+            print(f"[reranker] Using fallback reranker (no transformer): {e}")
+            self.model = None
+    
+    def _tokenize(self, text: str) -> set:
+        """Simple tokenization for fallback scoring."""
+        import re
+        return set(re.findall(r'\b[a-zA-Z]+\b', text.lower()))
+    
+    def _fallback_score(self, query: str, text: str) -> float:
+        """Fallback scoring based on keyword overlap and BM25-like signals."""
+        query_tokens = self._tokenize(query)
+        text_tokens = self._tokenize(text)
+        
+        if not query_tokens:
+            return 0.0
+        
+        # Jaccard similarity
+        intersection = query_tokens & text_tokens
+        union = query_tokens | text_tokens
+        jaccard = len(intersection) / len(union) if union else 0.0
+        
+        # Term frequency bonus
+        text_lower = text.lower()
+        tf_score = sum(text_lower.count(term) for term in query_tokens) / max(len(text.split()), 1)
+        
+        # Exact match bonus
+        exact_match = 1.0 if query.lower() in text.lower() else 0.0
+        
+        # Combine scores
+        return 0.4 * jaccard + 0.4 * tf_score + 0.2 * exact_match
+    
+    def rerank(self, query: str, documents: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Rerank documents based on query relevance."""
+        if not documents:
+            return documents
+        
+        if self.use_transformer:
+            # Use real cross-encoder
+            pairs = [[query, doc["text"]] for doc in documents]
+            scores = self.model.predict(pairs)
+        else:
+            # Use fallback scoring
+            scores = [self._fallback_score(query, doc["text"]) for doc in documents]
+        
+        # Combine with original scores (weighted average)
+        for i, doc in enumerate(documents):
+            original_score = doc.get("score", 0.0)
+            rerank_score = float(scores[i])
+            # Weighted combination: 30% original, 70% rerank
+            doc["score"] = 0.3 * original_score + 0.7 * rerank_score
+            doc["rerank_score"] = rerank_score
+        
+        # Sort by new score
+        return sorted(documents, key=lambda x: x["score"], reverse=True)
+
+
+# Initialize reranker
+reranker = SimpleCrossEncoderReranker()
+
+
 def embed_sparse(text: str) -> SparseVector:
     """Generate sparse BM25 vector for text."""
     indices, values = bm25.compute_sparse_vector(text)
@@ -281,37 +370,58 @@ def embed_sparse(text: str) -> SparseVector:
 
 
 def retrieve_hybrid(query_text: str, qvec: List[float]) -> List[Dict[str, Any]]:
-    """Hybrid retrieval using both dense (embedding) and sparse (BM25) vectors."""
+    """Hybrid retrieval using both dense (embedding) and sparse (BM25) vectors.
+    
+    Configurable via environment variables:
+    - TOP_K_DENSE: Number of dense vector candidates (default: 10)
+    - TOP_K_KEYWORD: Number of keyword/BM25 candidates (default: 10)
+    - TOP_K_FINAL: Final number of results after fusion (default: 6)
+    - FUSION_TYPE: RRF or SCORE_FUSION (default: RRF)
+    - RRF_K: RRF ranking constant (default: 60)
+    """
     from qdrant_client.http.models import Prefetch, FusionQuery, Fusion
     
     # Generate sparse vector for BM25
     sparse_vector = embed_sparse(query_text)
     
-    # Use RRF (Reciprocal Rank Fusion) to combine dense and sparse results
-    # First, prefetch from both vector types
+    # Log retrieval configuration
+    print(f"[hybrid] Config: dense={TOP_K_DENSE}, keyword={TOP_K_KEYWORD}, final={TOP_K_FINAL}, fusion={FUSION_TYPE}")
+    
+    # Use configured fusion type
+    if FUSION_TYPE == "RRF":
+        fusion = Fusion.RRF
+    elif FUSION_TYPE == "SCORE_FUSION":
+        fusion = Fusion.SCORE_FUSION
+    else:
+        fusion = Fusion.RRF  # Default fallback
+    
+    # Prefetch from both vector types with configurable limits
     prefetch = [
         Prefetch(
             query=qvec,
             using="dense",
-            limit=TOP_K * 2,
+            limit=TOP_K_DENSE,
         ),
         Prefetch(
             query=sparse_vector,
             using="sparse",
-            limit=TOP_K * 2,
+            limit=TOP_K_KEYWORD,
         ),
     ]
     
-    # Fuse results using RRF
+    # Fuse results using configured fusion method
     response = qdrant.query_points(
         collection_name=COLLECTION,
         prefetch=prefetch,
-        query=FusionQuery(fusion=Fusion.RRF),  # Reciprocal Rank Fusion
-        limit=TOP_K,
+        query=FusionQuery(fusion=fusion),
+        limit=RERANKER_TOP_K if RERANKER_ENABLED else TOP_K_FINAL,
         with_payload=True,
     )
     hits = response.points
-
+    
+    print(f"[hybrid] Retrieved {len(hits)} results using {FUSION_TYPE} fusion")
+    
+    # Convert to output format
     out = []
     for h in hits:
         payload = h.payload or {}
@@ -324,6 +434,15 @@ def retrieve_hybrid(query_text: str, qvec: List[float]) -> List[Dict[str, Any]]:
                 "source_file": payload.get("source_file"),
             }
         )
+    
+    # Apply reranking if enabled
+    if RERANKER_ENABLED and len(out) > 0:
+        print(f"[reranker] Applying reranking to {len(out)} candidates...")
+        out = reranker.rerank(query_text, out)
+        # Take top-K after reranking
+        out = out[:TOP_K_FINAL]
+        print(f"[reranker] Reranked to top-{len(out)} results")
+    
     return out
 
 
