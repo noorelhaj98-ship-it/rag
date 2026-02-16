@@ -27,3 +27,5 @@ Thumbs.db
 
 # Large files (optional - remove if you want to include PDFs)
 # *.pdf
+eval_results.json
+eval_final_results.txt
