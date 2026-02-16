@@ -8,8 +8,9 @@ from datetime import datetime
 from typing import List, Dict, Any, Tuple
 from fastapi import FastAPI, Request, Depends, HTTPException, Security
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from enum import Enum
 from dotenv import load_dotenv
@@ -112,15 +113,15 @@ MAX_CONTEXT_TOTAL_CHARS = 2400
 
 # ---- Hybrid Retrieval Config ----
 # Configurable retrieval parameters (env-driven)
-TOP_K_DENSE = int(os.environ.get("TOP_K_DENSE", "10"))        # Dense vector prefetch limit
-TOP_K_KEYWORD = int(os.environ.get("TOP_K_KEYWORD", "10"))    # Keyword/BM25 prefetch limit
+TOP_K_DENSE = int(os.environ.get("TOP_K_DENSE", "100"))       # Dense vector prefetch limit
+TOP_K_KEYWORD = int(os.environ.get("TOP_K_KEYWORD", "100"))   # Keyword/BM25 prefetch limit
 TOP_K_FINAL = int(os.environ.get("TOP_K_FINAL", "6"))         # Final results after fusion
 FUSION_TYPE = os.environ.get("FUSION_TYPE", "RRF").upper()    # RRF or SCORE_FUSION
 RRF_K = int(os.environ.get("RRF_K", "60"))                    # RRF ranking constant (default 60)
 
 # ---- Reranker Config ----
 RERANKER_ENABLED = os.environ.get("RERANKER_ENABLED", "true").lower() == "true"
-RERANKER_TOP_K = int(os.environ.get("RERANKER_TOP_K", "20"))  # Candidates to rerank
+RERANKER_TOP_K = int(os.environ.get("RERANKER_TOP_K", "30"))  # Candidates to rerank (practical limit for CPU)
 RERANKER_MODEL = os.environ.get("RERANKER_MODEL", "cross-encoder")  # cross-encoder or colbert
 
 # ---- Rate Limiter Setup ----
@@ -204,6 +205,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Serve static files (HTML UI)
+app.mount("/static", StaticFiles(directory="."), name="static")
 
 qdrant = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
 
@@ -298,10 +302,10 @@ class SimpleCrossEncoderReranker:
         self.use_transformer = False
         try:
             from sentence_transformers import CrossEncoder
-            # Try to load a small cross-encoder model
+            # Load real cross-encoder model
             self.model = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
             self.use_transformer = True
-            print("[reranker] Loaded cross-encoder model")
+            print("[reranker] Loaded cross-encoder model: ms-marco-MiniLM-L-6-v2")
         except Exception as e:
             print(f"[reranker] Using fallback reranker (no transformer): {e}")
             self.model = None
@@ -340,23 +344,28 @@ class SimpleCrossEncoderReranker:
             return documents
         
         if self.use_transformer:
-            # Use real cross-encoder
+            # Use real cross-encoder - sort by cross-encoder score only
             pairs = [[query, doc["text"]] for doc in documents]
             scores = self.model.predict(pairs)
+            
+            # Store cross-encoder score and sort by it only
+            for i, doc in enumerate(documents):
+                doc["rerank_score"] = float(scores[i])
+            
+            # Sort by cross-encoder score only (descending - higher is better)
+            return sorted(documents, key=lambda x: x["rerank_score"], reverse=True)
         else:
             # Use fallback scoring
             scores = [self._fallback_score(query, doc["text"]) for doc in documents]
-        
-        # Combine with original scores (weighted average)
-        for i, doc in enumerate(documents):
-            original_score = doc.get("score", 0.0)
-            rerank_score = float(scores[i])
-            # Weighted combination: 30% original, 70% rerank
-            doc["score"] = 0.3 * original_score + 0.7 * rerank_score
-            doc["rerank_score"] = rerank_score
-        
-        # Sort by new score
-        return sorted(documents, key=lambda x: x["score"], reverse=True)
+            
+            # Combine with original scores for fallback
+            for i, doc in enumerate(documents):
+                original_score = doc.get("score", 0.0)
+                rerank_score = float(scores[i])
+                doc["score"] = 0.3 * original_score + 0.7 * rerank_score
+                doc["rerank_score"] = rerank_score
+            
+            return sorted(documents, key=lambda x: x["score"], reverse=True)
 
 
 # Initialize reranker
@@ -409,6 +418,25 @@ def retrieve_hybrid(query_text: str, qvec: List[float]) -> List[Dict[str, Any]]:
         ),
     ]
     
+    # Log individual branch results before fusion
+    dense_response = qdrant.query_points(
+        collection_name=COLLECTION,
+        query=qvec,
+        using="dense",
+        limit=TOP_K_DENSE,
+        with_payload=True,
+    )
+    print(f"[dense] Retrieved {len(dense_response.points)} dense vector hits")
+    
+    keyword_response = qdrant.query_points(
+        collection_name=COLLECTION,
+        query=sparse_vector,
+        using="sparse",
+        limit=TOP_K_KEYWORD,
+        with_payload=True,
+    )
+    print(f"[keyword] Retrieved {len(keyword_response.points)} keyword/BM25 hits")
+    
     # Fuse results using configured fusion method
     response = qdrant.query_points(
         collection_name=COLLECTION,
@@ -419,29 +447,52 @@ def retrieve_hybrid(query_text: str, qvec: List[float]) -> List[Dict[str, Any]]:
     )
     hits = response.points
     
-    print(f"[hybrid] Retrieved {len(hits)} results using {FUSION_TYPE} fusion")
+    print(f"[hybrid] Fused into {len(hits)} results using {FUSION_TYPE} fusion")
     
     # Convert to output format
     out = []
-    for h in hits:
+    for idx, h in enumerate(hits):
         payload = h.payload or {}
         out.append(
             {
+                "rank": idx + 1,
                 "score": float(h.score),
-                "text": (payload.get("text") or "").strip(),
+                "text": (payload.get("text") or "").strip()[:100] + "...",
                 "chunk_id": payload.get("chunk_id"),
                 "page_number": payload.get("page_number"),
                 "source_file": payload.get("source_file"),
             }
         )
     
+    # Log fused candidates (top 20)
+    print(f"\n[DEBUG] FUSED CANDIDATES (top {min(20, len(out))}):")
+    for item in out[:20]:
+        print(f"  Rank {item['rank']:2d}: Page {item['page_number']:3d} | Score {item['score']:.4f} | {item['chunk_id'][:30]}...")
+    
     # Apply reranking if enabled
+    print(f"\n[DEBUG] RERANKER_ENABLED={RERANKER_ENABLED}, len(out)={len(out)}")
     if RERANKER_ENABLED and len(out) > 0:
         print(f"[reranker] Applying reranking to {len(out)} candidates...")
         out = reranker.rerank(query_text, out)
+        
+        # Log reranked results (top 10)
+        print(f"\n[DEBUG] RERANKED RESULTS (top {min(10, len(out))}):")
+        for idx, item in enumerate(out[:10], 1):
+            rerank_score = item.get('rerank_score', 'N/A')
+            if isinstance(rerank_score, float):
+                print(f"  New Rank {idx:2d}: Page {item['page_number']:3d} | Combined Score {item['score']:.4f} | Rerank Score {rerank_score:.4f} | {item['chunk_id'][:30]}...")
+            else:
+                print(f"  New Rank {idx:2d}: Page {item['page_number']:3d} | Combined Score {item['score']:.4f} | {item['chunk_id'][:30]}...")
+        
         # Take top-K after reranking
         out = out[:TOP_K_FINAL]
-        print(f"[reranker] Reranked to top-{len(out)} results")
+        print(f"\n[reranker] Reranked to top-{len(out)} results")
+    
+    # Clean up text for return
+    for item in out:
+        del item['rank']
+        if 'rerank_score' in item:
+            del item['rerank_score']
     
     return out
 
@@ -532,6 +583,12 @@ def deepseek_answer(question: str, context: str, history: str = "", previous_ans
 
 @app.get("/")
 def root():
+    # Serve the HTML UI
+    return FileResponse("index.html")
+
+
+@app.get("/api")
+def api_info():
     return {
         "message": "RAG API is running",
         "rbac_enabled": RBAC_ENABLED,
@@ -584,6 +641,11 @@ def ask(req: AskRequest, request: Request, user: Dict[str, Any] = Depends(requir
         return {"answer": answer, "sources": []}
     
     context = compress_context(items)
+    
+    # Log final context being sent to LLM
+    print(f"\n[final context] Using {len(items)} chunks, total context length: {len(context)} chars")
+    print(f"[final context] Pages used: {[i['page_number'] for i in items]}")
+    
     previous_answer = get_last_answer()
     answer = deepseek_answer(question, context, history, previous_answer)
     
