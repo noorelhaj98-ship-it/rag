@@ -8,7 +8,7 @@ import requests
 from typing import Dict, List, Any
 
 # Config
-API_BASE = "http://localhost:8000"
+API_BASE = "http://localhost:8001"
 API_KEY = "alice123"  # Use a valid API key
 
 

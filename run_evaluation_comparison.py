@@ -17,9 +17,9 @@ from typing import Dict, Any, List
 import requests
 
 # Configuration
-API_BASE = os.environ.get("RAG_API_URL", "http://localhost:8000")
+API_BASE = os.environ.get("RAG_API_URL", "http://localhost:8001")
 API_KEY = os.environ.get("RAG_API_KEY", "alice123")
-QUESTIONS_FILE = "eval_questions.json"
+QUESTIONS_FILE = "eval_questions_mixed.json"
 RESULTS_FILE = "eval_comparison_results.json"
 TOP_K = 6
 
@@ -31,13 +31,16 @@ def load_questions() -> List[Dict[str, Any]]:
     return data["evaluation_set"]
 
 
-def query_rag(question: str) -> Dict[str, Any]:
+def query_rag(question: str, reranker_enabled: bool = True) -> Dict[str, Any]:
     """Query the RAG API and return results."""
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
     }
-    payload = {"question": question}
+    payload = {
+        "question": question,
+        "config": {"reranker_enabled": reranker_enabled}
+    }
     
     try:
         response = requests.post(
@@ -81,7 +84,7 @@ def evaluate_single(
     }
 
 
-def run_evaluation_batch(name: str) -> Dict[str, Any]:
+def run_evaluation_batch(name: str, reranker_enabled: bool = True) -> Dict[str, Any]:
     """Run evaluation for all questions."""
     print(f"\n{'='*60}")
     print(f"Running: {name}")
@@ -93,7 +96,7 @@ def run_evaluation_batch(name: str) -> Dict[str, Any]:
     for i, q in enumerate(questions, 1):
         print(f"Q{i:02d}: {q['question'][:60]}...")
         
-        response = query_rag(q["question"])
+        response = query_rag(q["question"], reranker_enabled=reranker_enabled)
         sources = response.get("sources", [])
         
         eval_result = evaluate_single(q, sources)
@@ -231,16 +234,22 @@ def main():
         sys.exit(1)
     
     # Run baseline evaluation (without reranker)
-    # Note: This requires server restart with RERANKER_ENABLED=false
-    print("\n[NOTE] To get true baseline, restart server with RERANKER_ENABLED=false")
-    print("       Running comparison with current server config...")
+    baseline = run_evaluation_batch("Baseline (Without Reranker)", reranker_enabled=False)
     
-    # Run evaluation with current config (should have reranker)
-    with_reranker = run_evaluation_batch("With Reranker")
+    # Run evaluation with reranker
+    with_reranker = run_evaluation_batch("With Reranker", reranker_enabled=True)
+    
+    # Compare results
+    comparison = compare_results(baseline, with_reranker)
+    
+    # Print comparison report
+    print_comparison_report(baseline, with_reranker, comparison)
     
     # Save results
     output = {
+        "baseline": baseline,
         "with_reranker": with_reranker,
+        "comparison": comparison,
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
         "top_k": TOP_K
     }
@@ -249,15 +258,6 @@ def main():
         json.dump(output, f, indent=2, ensure_ascii=False)
     
     print(f"\n[OK] Results saved to: {RESULTS_FILE}")
-    
-    # Print summary
-    print("\n" + "="*70)
-    print("RESULTS SUMMARY (With Reranker)")
-    print("="*70)
-    print(f"Total Questions: {with_reranker['total_questions']}")
-    print(f"Found in Top-{TOP_K}: {with_reranker['found_in_top_k']}/{with_reranker['total_questions']} ({with_reranker['found_percentage']}%)")
-    print(f"Correct Page: {with_reranker['correct_page']}/{with_reranker['total_questions']} ({with_reranker['correct_page_percentage']}%)")
-    print("="*70)
 
 
 if __name__ == "__main__":

@@ -6,61 +6,23 @@ from dotenv import load_dotenv
 from qdrant_client import QdrantClient
 from pathlib import Path
 
+# Import shared utilities
+from rag_utils import (
+    EMBEDDING_SERVICE_TYPE, EMBEDDING_API_URL, LOCAL_EMBEDDING_MODEL,
+    QDRANT_URL, QDRANT_API_KEY, COLLECTION,
+    DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL, DEEPSEEK_MODEL,
+    EMBED_TIMEOUT, TOP_K, MAX_CONTEXT_CHARS_PER_CHUNK, MAX_CONTEXT_TOTAL_CHARS,
+    embed_query, compress_context, deepseek_answer
+)
+
 load_dotenv(dotenv_path=Path(__file__).with_name(".env"), override=True)
-
-# ---- Config (env-driven) ----
-EMBEDDING_SERVICE_TYPE = os.environ.get("EMBEDDING_SERVICE_TYPE", "aragemma").lower()
-EMBEDDING_API_URL = os.environ.get("EMBEDDING_API_URL")
-
-QDRANT_URL = os.environ.get("QDRANT_URL", "http://localhost:6333")
-QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY") or None
-COLLECTION = os.environ.get("QDRANT_COLLECTION", "realsoft_chunks")
-
-DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY")
-DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
-DEEPSEEK_MODEL = os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
-
-EMBED_TIMEOUT = 120
 
 TOP_K = 6
 MAX_CONTEXT_CHARS_PER_CHUNK = 450  # keep short
 MAX_CONTEXT_TOTAL_CHARS = 2400     # keep short
 
 
-def embed_query(text: str) -> List[float]:
-    if EMBEDDING_SERVICE_TYPE != "aragemma":
-        raise RuntimeError("Set EMBEDDING_SERVICE_TYPE=aragemma")
-    if not EMBEDDING_API_URL:
-        raise RuntimeError("Missing EMBEDDING_API_URL")
-
-    payload = {"text": text}  # AraGemma expects single string, not list
-
-    for attempt in range(6):
-        try:
-            r = requests.post(EMBEDDING_API_URL, json=payload, timeout=EMBED_TIMEOUT)
-            if r.status_code >= 400:
-                print("[embed] status:", r.status_code)
-                print("[embed] body:", r.text[:2000])
-            r.raise_for_status()
-            data = r.json()
-
-            if "embeddings" in data:
-                return data["embeddings"][0]
-            if "embedding" in data:
-                return data["embedding"]
-            if "data" in data and data["data"] and "embedding" in data["data"][0]:
-                return data["data"][0]["embedding"]
-            if "vector" in data:
-                return data["vector"]
-
-            raise RuntimeError(f"Unexpected embedding response: {data}")
-
-        except Exception as e:
-            wait = min(2 ** attempt, 10)
-            print(f"[embed] error: {e} | retrying in {wait}s")
-            time.sleep(wait)
-
-    raise RuntimeError("Embedding failed after retries.")
+# embed_query function is now imported from rag_utils
 
 
 def retrieve(qvec: List[float]) -> List[Dict[str, Any]]:
@@ -87,69 +49,7 @@ def retrieve(qvec: List[float]) -> List[Dict[str, Any]]:
     return results
 
 
-def compress_context(items: List[Dict[str, Any]]) -> str:
-    """
-    Keep only a small snippet from each chunk, and cap total context size,
-    so answers become short + targeted (and cheaper).
-    """
-    blocks = []
-    total = 0
-
-    for it in items:
-        t = " ".join(it["text"].split())  # normalize whitespace
-        snippet = t[:MAX_CONTEXT_CHARS_PER_CHUNK]
-
-        block = (
-            f"[source: {it.get('source_file')} | page: {it.get('page_number')} | chunk_id: {it.get('chunk_id')}]\n"
-            f"{snippet}\n"
-        )
-        if total + len(block) > MAX_CONTEXT_TOTAL_CHARS:
-            break
-
-        blocks.append(block)
-        total += len(block)
-
-    return "\n".join(blocks)
-
-
-def deepseek_answer(question: str, context: str) -> str:
-    if not DEEPSEEK_API_KEY:
-        raise RuntimeError("Missing DEEPSEEK_API_KEY in .env")
-
-    url = f"{DEEPSEEK_BASE_URL}/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
-        "Content-Type": "application/json",
-    }
-
-    system = (
-        "You are a precise assistant. Answer ONLY using the provided context. "
-        "Be concise and specific: 1-2 sentences maximum. "
-        "If the answer is not in the context, say: 'Not found in the provided documents.'"
-    )
-
-    payload = {
-        "model": DEEPSEEK_MODEL,
-        "messages": [
-            {"role": "system", "content": system},
-            {
-                "role": "user",
-                "content": f"Context:\n{context}\n\nQuestion: {question}\n\nAnswer:",
-            },
-        ],
-        "temperature": 0.2,
-        "max_tokens": 120,
-    }
-
-    r = requests.post(url, headers=headers, json=payload, timeout=60)
-    if r.status_code >= 400:
-        print("[deepseek] status:", r.status_code)
-        print("[deepseek] body:", r.text[:2000])
-    r.raise_for_status()
-    data = r.json()
-    return data["choices"][0]["message"]["content"].strip()
-
-
+# compress_context and deepseek_answer functions are now imported from rag_utils
 
 
 def main():

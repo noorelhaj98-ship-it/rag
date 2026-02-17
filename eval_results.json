@@ -1,26 +1,26 @@
 {
   "summary": {
-    "total_questions": 25,
-    "found_in_top_k": 1,
-    "found_percentage": 4.0,
-    "correct_page": 2,
-    "correct_page_percentage": 8.0
+    "total_questions": 100,
+    "found_in_top_k": 0,
+    "found_percentage": 0.0,
+    "correct_page": 0,
+    "correct_page_percentage": 0.0
   },
   "category_breakdown": {
     "company_info": {
-      "total": 6,
+      "total": 28,
       "found": 0
     },
     "products": {
-      "total": 6,
-      "found": 1
+      "total": 33,
+      "found": 0
     },
     "services": {
-      "total": 3,
+      "total": 24,
       "found": 0
     },
     "testimonials": {
-      "total": 2,
+      "total": 6,
       "found": 0
     },
     "partners": {
@@ -34,251 +34,125 @@
     "contact": {
       "total": 1,
       "found": 0
+    },
+    "clients": {
+      "total": 1,
+      "found": 0
     }
   },
   "detailed_results": [
     {
       "question_id": 1,
-      "question": "What is RealSoft's main mission?",
+      "question": "What is the main mission of RealSoft?",
       "category": "company_info",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        52,
-        93,
-        66,
-        83,
-        104,
-        17
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p052_c001_7c8c7f5673426918",
-        "c01862dcf8b8_p093_c001_f8469703040de49e",
-        "c01862dcf8b8_p066_c001_e99483d7c8147237",
-        "c01862dcf8b8_p083_c001_07039df9e84fd978",
-        "c01862dcf8b8_p104_c002_75121b541c43775c",
-        "c01862dcf8b8_p017_c001_8510fd9183add2e1"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
       "question_id": 2,
+      "question": "ما هي رؤية شركة ريلسوفت؟",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 3,
       "question": "When was RealSoft founded?",
       "category": "company_info",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        95,
-        64,
-        13,
-        62,
-        66,
-        83
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p095_c001_9a066f61f8b7fc0c",
-        "c01862dcf8b8_p064_c002_915a822c5d34c12d",
-        "c01862dcf8b8_p013_c001_7a07eba52af0fa86",
-        "c01862dcf8b8_p062_c002_b4d3802350ac926e",
-        "c01862dcf8b8_p066_c002_4071711860b4c84e",
-        "c01862dcf8b8_p083_c001_07039df9e84fd978"
-      ]
-    },
-    {
-      "question_id": 3,
-      "question": "What products does RealSoft offer?",
-      "category": "products",
-      "found_in_top_k": true,
-      "found_at_rank": 2,
-      "correct_page": true,
-      "retrieved_pages": [
-        52,
-        3,
-        93,
-        66,
-        99,
-        2
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p052_c001_7c8c7f5673426918",
-        "c01862dcf8b8_p003_c001_69e396cbb3faa260",
-        "c01862dcf8b8_p093_c001_f8469703040de49e",
-        "c01862dcf8b8_p066_c001_e99483d7c8147237",
-        "c01862dcf8b8_p099_c001_53276508efa1f6e7",
-        "c01862dcf8b8_p002_c002_1d1ede76e8f74038"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
       "question_id": 4,
-      "question": "What is Al-Khwarizmi platform?",
+      "question": "What products does RealSoft offer?",
       "category": "products",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        34,
-        30,
-        53,
-        106,
-        11,
-        14
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p034_c001_b929bc2acc7b9e65",
-        "c01862dcf8b8_p030_c001_356850ab53b90bad",
-        "c01862dcf8b8_p053_c002_807e9870546650cc",
-        "c01862dcf8b8_p106_c002_5706fb89f7bb5d98",
-        "c01862dcf8b8_p011_c001_777449ea6f011991",
-        "c01862dcf8b8_p014_c002_5261aa0e76945c45"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
       "question_id": 5,
+      "question": "ما هو منصة الخوارزمي؟",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 6,
       "question": "How many years of experience does RealSoft have?",
       "category": "company_info",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        111,
-        66,
-        67,
-        93,
-        13,
-        16
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p111_c002_b17e4fba28e5a05b",
-        "c01862dcf8b8_p066_c002_4071711860b4c84e",
-        "c01862dcf8b8_p067_c001_c6e8a620caad9914",
-        "c01862dcf8b8_p093_c001_f8469703040de49e",
-        "c01862dcf8b8_p013_c001_7a07eba52af0fa86",
-        "c01862dcf8b8_p016_c002_69448ad844a33f5d"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 6,
+      "question_id": 7,
       "question": "What statistical solutions does RealSoft provide?",
       "category": "services",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        52,
-        100,
-        66,
-        67,
-        55,
-        83
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p052_c001_7c8c7f5673426918",
-        "c01862dcf8b8_p100_c001_9f80627dedf87a3f",
-        "c01862dcf8b8_p066_c001_e99483d7c8147237",
-        "c01862dcf8b8_p067_c001_c6e8a620caad9914",
-        "c01862dcf8b8_p055_c001_a1d44707145763e8",
-        "c01862dcf8b8_p083_c001_07039df9e84fd978"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 7,
-      "question": "What is RealSoft's vision?",
+      "question_id": 8,
+      "question": "What is the vision of RealSoft?",
       "category": "company_info",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        83,
-        52,
-        66,
-        16,
-        93,
-        62
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p083_c001_07039df9e84fd978",
-        "c01862dcf8b8_p052_c001_7c8c7f5673426918",
-        "c01862dcf8b8_p066_c002_4071711860b4c84e",
-        "c01862dcf8b8_p016_c002_69448ad844a33f5d",
-        "c01862dcf8b8_p093_c001_f8469703040de49e",
-        "c01862dcf8b8_p062_c002_b4d3802350ac926e"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 8,
+      "question_id": 9,
       "question": "Who is the Director of Jordan Meteorological Department?",
       "category": "testimonials",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        115,
-        118,
-        95,
-        116,
-        16,
-        14
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p115_c002_ec03e0e255b4bb56",
-        "c01862dcf8b8_p118_c002_2370b30c7a5585fa",
-        "c01862dcf8b8_p095_c001_9a066f61f8b7fc0c",
-        "c01862dcf8b8_p116_c001_581351f8fb1e70bd",
-        "c01862dcf8b8_p016_c001_102ec7c006d02151",
-        "c01862dcf8b8_p014_c001_c10ccff945f3e2ab"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 9,
-      "question": "What countries does RealSoft operate in?",
+      "question_id": 10,
+      "question": "في أي دول تعمل ريلسوفت؟",
       "category": "company_info",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        2,
-        95,
-        62,
-        67,
-        66,
-        52
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p002_c002_1d1ede76e8f74038",
-        "c01862dcf8b8_p095_c001_9a066f61f8b7fc0c",
-        "c01862dcf8b8_p062_c002_b4d3802350ac926e",
-        "c01862dcf8b8_p067_c001_c6e8a620caad9914",
-        "c01862dcf8b8_p066_c002_4071711860b4c84e",
-        "c01862dcf8b8_p052_c001_7c8c7f5673426918"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 10,
+      "question_id": 11,
       "question": "What is RealData Hub?",
       "category": "products",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        38,
-        114,
-        53,
-        52,
-        83,
-        62
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p038_c001_b48bb7ae72a4551f",
-        "c01862dcf8b8_p114_c002_91772345dcea037b",
-        "c01862dcf8b8_p053_c001_118572e3ecd3c4ea",
-        "c01862dcf8b8_p052_c001_7c8c7f5673426918",
-        "c01862dcf8b8_p083_c001_07039df9e84fd978",
-        "c01862dcf8b8_p062_c002_b4d3802350ac926e"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 11,
+      "question_id": 12,
       "question": "What technology partners does RealSoft work with?",
       "category": "partners",
       "found_in_top_k": false,
@@ -288,7 +162,7 @@
       "retrieved_chunk_ids": []
     },
     {
-      "question_id": 12,
+      "question_id": 13,
       "question": "What is Microsoft partnership about?",
       "category": "partners",
       "found_in_top_k": false,
@@ -298,7 +172,7 @@
       "retrieved_chunk_ids": []
     },
     {
-      "question_id": 13,
+      "question_id": 14,
       "question": "What awards has RealSoft received from Union of Arab Statisticians?",
       "category": "awards",
       "found_in_top_k": false,
@@ -308,8 +182,8 @@
       "retrieved_chunk_ids": []
     },
     {
-      "question_id": 14,
-      "question": "What is RealSoft's contact number in Jordan?",
+      "question_id": 15,
+      "question": "ما هو رقم هاتف ريلسوفت في الأردن؟",
       "category": "contact",
       "found_in_top_k": false,
       "found_at_rank": null,
@@ -318,7 +192,7 @@
       "retrieved_chunk_ids": []
     },
     {
-      "question_id": 15,
+      "question_id": 16,
       "question": "What is the FalconMap platform?",
       "category": "products",
       "found_in_top_k": false,
@@ -328,7 +202,7 @@
       "retrieved_chunk_ids": []
     },
     {
-      "question_id": 16,
+      "question_id": 17,
       "question": "What is RealSoft's approach to digital transformation?",
       "category": "services",
       "found_in_top_k": false,
@@ -338,7 +212,7 @@
       "retrieved_chunk_ids": []
     },
     {
-      "question_id": 17,
+      "question_id": 18,
       "question": "Who is Dr. Diaa Awad Kazem?",
       "category": "testimonials",
       "found_in_top_k": false,
@@ -348,7 +222,7 @@
       "retrieved_chunk_ids": []
     },
     {
-      "question_id": 18,
+      "question_id": 19,
       "question": "What is the Ada'a product?",
       "category": "products",
       "found_in_top_k": false,
@@ -358,172 +232,814 @@
       "retrieved_chunk_ids": []
     },
     {
-      "question_id": 19,
-      "question": "What is Esri and what do they do?",
+      "question_id": 20,
+      "question": "ما هي شركة إسري وما الذي تفعله؟",
       "category": "partners",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        91,
-        63,
-        62,
-        113,
-        54,
-        73
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p091_c002_93822cf2124d2669",
-        "c01862dcf8b8_p063_c001_0b62c611bbc1b4be",
-        "c01862dcf8b8_p062_c001_e29bf1a64c0f39bc",
-        "c01862dcf8b8_p113_c002_8c20791c8664c7b5",
-        "c01862dcf8b8_p054_c001_b7c9b3eb8686c7ab",
-        "c01862dcf8b8_p073_c002_ee119f6b147ae58f"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 20,
+      "question_id": 21,
       "question": "What is Mendix platform?",
       "category": "partners",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        98,
-        99,
-        23,
-        11,
-        107,
-        53
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p098_c002_9b21ca39f0f0218a",
-        "c01862dcf8b8_p099_c002_a38b00b6ba4663fc",
-        "c01862dcf8b8_p023_c001_8e008dc81c4f7b6f",
-        "c01862dcf8b8_p011_c001_777449ea6f011991",
-        "c01862dcf8b8_p107_c002_fc135dac932697d0",
-        "c01862dcf8b8_p053_c001_118572e3ecd3c4ea"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 21,
+      "question_id": 22,
       "question": "What values does RealSoft have?",
       "category": "company_info",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        16,
-        66,
-        104,
-        93,
-        1,
-        67
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p016_c002_69448ad844a33f5d",
-        "c01862dcf8b8_p066_c002_4071711860b4c84e",
-        "c01862dcf8b8_p104_c002_75121b541c43775c",
-        "c01862dcf8b8_p093_c001_f8469703040de49e",
-        "c01862dcf8b8_p001_c002_e79d4583b0ba206f",
-        "c01862dcf8b8_p067_c001_c6e8a620caad9914"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 22,
+      "question_id": 23,
       "question": "What is RealSoft's talent outsourcing service?",
       "category": "services",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        96,
-        93,
-        17,
-        100,
-        83,
-        52
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p096_c001_15e5f90a6f83aa91",
-        "c01862dcf8b8_p093_c001_f8469703040de49e",
-        "c01862dcf8b8_p017_c001_8510fd9183add2e1",
-        "c01862dcf8b8_p100_c001_9f80627dedf87a3f",
-        "c01862dcf8b8_p083_c001_07039df9e84fd978",
-        "c01862dcf8b8_p052_c001_7c8c7f5673426918"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 23,
+      "question_id": 24,
       "question": "What is the 8th International Conference of the Union of Arab Statisticians?",
       "category": "awards",
       "found_in_top_k": false,
       "found_at_rank": null,
-      "correct_page": true,
-      "retrieved_pages": [
-        13,
-        67,
-        95,
-        108,
-        55,
-        52
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p013_c002_835a2cb93f2ee3f4",
-        "c01862dcf8b8_p067_c001_c6e8a620caad9914",
-        "c01862dcf8b8_p095_c001_9a066f61f8b7fc0c",
-        "c01862dcf8b8_p108_c001_f3a6763ed1f58dce",
-        "c01862dcf8b8_p055_c001_a1d44707145763e8",
-        "c01862dcf8b8_p052_c001_7c8c7f5673426918"
-      ]
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 24,
+      "question_id": 25,
       "question": "What is RealData Flow?",
       "category": "products",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        114,
-        38,
-        53,
-        66,
-        62,
-        66
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p114_c002_91772345dcea037b",
-        "c01862dcf8b8_p038_c001_b48bb7ae72a4551f",
-        "c01862dcf8b8_p053_c001_118572e3ecd3c4ea",
-        "c01862dcf8b8_p066_c001_e99483d7c8147237",
-        "c01862dcf8b8_p062_c002_b4d3802350ac926e",
-        "c01862dcf8b8_p066_c002_4071711860b4c84e"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     },
     {
-      "question_id": 25,
+      "question_id": 26,
       "question": "What is SBM company?",
       "category": "partners",
       "found_in_top_k": false,
       "found_at_rank": null,
       "correct_page": false,
-      "retrieved_pages": [
-        94,
-        21,
-        73,
-        12,
-        113,
-        50
-      ],
-      "retrieved_chunk_ids": [
-        "c01862dcf8b8_p094_c001_80ed58215281f56b",
-        "c01862dcf8b8_p021_c001_5d65c9733708edd0",
-        "c01862dcf8b8_p073_c002_ee119f6b147ae58f",
-        "c01862dcf8b8_p012_c001_49be1202cd7d257d",
-        "c01862dcf8b8_p113_c002_8c20791c8664c7b5",
-        "c01862dcf8b8_p050_c001_00496c074005a03d"
-      ]
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 27,
+      "question": "ما هو منتج ريل كستومز؟",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 28,
+      "question": "What is the Workflow Engine product?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 29,
+      "question": "What is the motto of RealSoft?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 30,
+      "question": "من هو رائد رافد الخطاب؟",
+      "category": "testimonials",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 31,
+      "question": "How many employees does RealSoft have?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 32,
+      "question": "How many clients does RealSoft serve?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 33,
+      "question": "What is the main focus of RealSoft's AI solutions?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 34,
+      "question": "ما هي قيم ريلسوفت الأساسية؟",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 35,
+      "question": "What is the first core value of RealSoft?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 36,
+      "question": "What is the second core value of RealSoft?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 37,
+      "question": "What is the third core value of RealSoft?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 38,
+      "question": "What is the fourth core value of RealSoft?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 39,
+      "question": "ما هي مزايا منصة أدا؟",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 40,
+      "question": "What branches does RealSoft have?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 41,
+      "question": "What types of solutions does RealSoft specialize in?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 42,
+      "question": "What additional services does RealSoft provide?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 43,
+      "question": "What technologies does RealSoft utilize?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 44,
+      "question": "ما هو برنامج فوكس إن إس أو؟",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 45,
+      "question": "What does RealSoft's solution serve?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 46,
+      "question": "What statistical domains does RealSoft's solution cover?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 47,
+      "question": "What workflow does RealSoft's solution power?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 48,
+      "question": "What technology does RealSoft integrate with?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 49,
+      "question": "What capabilities does RealSoft's solution have?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 50,
+      "question": "ما هي ميزات منصة الخوارزمي؟",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 51,
+      "question": "What makes Al-Khwarizmi flexible?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 52,
+      "question": "What did a client say about using Al-Khwarizmi?",
+      "category": "testimonials",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 53,
+      "question": "How long has a client been using Al-Khwarizmi?",
+      "category": "testimonials",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 54,
+      "question": "What benefits did a client experience with Al-Khwarizmi?",
+      "category": "testimonials",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 55,
+      "question": "ما هي وظيفة نظام إدارة سير العمل؟",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 56,
+      "question": "What can be configured in the Workflow Engine?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 57,
+      "question": "What types of workflows can be created with the Workflow Engine?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 58,
+      "question": "What is the purpose of FalconMap?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 59,
+      "question": "What is FalconMap powered by?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 60,
+      "question": "ما هي ميزات فوكس ماب؟",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 61,
+      "question": "What map editing capabilities does FalconMap have?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 62,
+      "question": "What devices does FalconMap support?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 63,
+      "question": "What is the Multi-Base Maps feature?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 64,
+      "question": "What does the Topology Rules feature do?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 65,
+      "question": "What is the Field task management component?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 66,
+      "question": "What are the Online-offline Modes in FalconMap?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 67,
+      "question": "What does RealData Flow do?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 68,
+      "question": "ما هي مميزات ريل داتا فلو؟",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 69,
+      "question": "What are the Key Features & Capabilities of RealData Flow?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 70,
+      "question": "What is Multi-Source Support in RealData Flow?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 71,
+      "question": "What does Automated Workflows do in RealData Flow?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 72,
+      "question": "What clients has RealSoft worked with?",
+      "category": "clients",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 73,
+      "question": "What is the main purpose of RealData Hub?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 74,
+      "question": "ما هي مكونات منصة ريل داتا هب؟",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 75,
+      "question": "What does RealData Hub provide?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 76,
+      "question": "What is the main benefit of RealCustoms?",
+      "category": "products",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 77,
+      "question": "What problem did RealSoft help solve for clients?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 78,
+      "question": "What was the first challenge in the client's problem?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 79,
+      "question": "What was the second challenge in the client's problem?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 80,
+      "question": "ما كان التحدي الثالث في مشكلة العميل؟",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 81,
+      "question": "What was the fourth challenge in the client's problem?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 82,
+      "question": "What makes RealSoft a trusted provider?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 83,
+      "question": "How does RealSoft help partners?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 84,
+      "question": "From which countries does RealSoft provide talents?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 85,
+      "question": "What does RealSoft's vision aim for?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 86,
+      "question": "How does RealSoft foster trust?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 87,
+      "question": "What does RealSoft do to commit to deliver?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 88,
+      "question": "ما معنى أن تكون مستعدًا لغدًا في ريلسوفت؟",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 89,
+      "question": "What geographic regions does RealSoft operate in?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 90,
+      "question": "What types of solutions does RealSoft specialize in?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 91,
+      "question": "What additional services does RealSoft provide?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 92,
+      "question": "What technologies does RealSoft work with?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 93,
+      "question": "What is the motto of RealSoft regarding data?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 94,
+      "question": "ما هي رسالة ريلسوفت حول البيانات؟",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 95,
+      "question": "How many countries does RealSoft operate in?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 96,
+      "question": "What is the primary focus of RealSoft's work?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 97,
+      "question": "What does RealSoft aim to provide with its solutions?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 98,
+      "question": "What makes RealSoft's applications special?",
+      "category": "services",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 99,
+      "question": "What is the core philosophy of RealSoft?",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
+    },
+    {
+      "question_id": 100,
+      "question": "ما هو شعار ريلسوفت الذي يعبر عن توجهها نحو الأعمال؟",
+      "category": "company_info",
+      "found_in_top_k": false,
+      "found_at_rank": null,
+      "correct_page": false,
+      "retrieved_pages": [],
+      "retrieved_chunk_ids": []
     }
   ]
 }

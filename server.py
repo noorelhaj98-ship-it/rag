@@ -4,8 +4,9 @@ import yaml
 import logging
 import json
 import re
+import math
 from datetime import datetime
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 from fastapi import FastAPI, Request, Depends, HTTPException, Security
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
@@ -24,6 +25,15 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
 load_dotenv(dotenv_path=Path(__file__).with_name(".env"), override=True)
+
+# Import shared utilities
+from rag_utils import (
+    EMBEDDING_SERVICE_TYPE, EMBEDDING_API_URL, LOCAL_EMBEDDING_MODEL,
+    QDRANT_URL, QDRANT_API_KEY, COLLECTION,
+    DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL, DEEPSEEK_MODEL,
+    EMBED_TIMEOUT, TOP_K, MAX_CONTEXT_CHARS_PER_CHUNK, MAX_CONTEXT_TOTAL_CHARS,
+    embed_query, compress_context, deepseek_answer
+)
 
 # ---- Logfire Setup ----
 import logfire
@@ -94,13 +104,9 @@ def get_last_answer() -> str:
             return msg["content"]
     return ""
 
-# ---- Config (env-driven) ----
-EMBEDDING_SERVICE_TYPE = os.environ.get("EMBEDDING_SERVICE_TYPE", "aragemma").lower()
-EMBEDDING_API_URL = os.environ.get("EMBEDDING_API_URL")
-
 QDRANT_URL = os.environ.get("QDRANT_URL", "http://localhost:6333")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY") or None
-COLLECTION = os.environ.get("QDRANT_COLLECTION", "realsoft_chunks")
+COLLECTION = os.environ.get("QDRANT_COLLECTION", "realsoft_chunks_hybrid")
 
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY")
 DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
@@ -215,27 +221,10 @@ qdrant = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
 class AskRequest(BaseModel):
     question: str
     clear_history: bool = False  # Option to reset conversation
+    config: Optional[Dict[str, Any]] = None  # Request-specific configuration
 
 
-def embed_query(text: str) -> List[float]:
-    if EMBEDDING_SERVICE_TYPE != "aragemma":
-        raise RuntimeError("Set EMBEDDING_SERVICE_TYPE=aragemma")
-    if not EMBEDDING_API_URL:
-        raise RuntimeError("Missing EMBEDDING_API_URL")
-
-    payload = {"text": text}  # aragemma expects single text string
-    r = requests.post(EMBEDDING_API_URL, json=payload, timeout=EMBED_TIMEOUT)
-    r.raise_for_status()
-    data = r.json()
-
-    if "embedding" in data:
-        return data["embedding"]
-    if "embeddings" in data and len(data["embeddings"]) > 0:
-        return data["embeddings"][0]
-    if "data" in data and isinstance(data["data"], list) and len(data["data"]) > 0:
-        return data["data"][0].get("embedding", data["data"][0])
-
-    raise RuntimeError(f"Unexpected embedding response: {data}")
+# embed_query function is now imported from rag_utils
 
 
 # ---- BM25 Sparse Vector Generation ----
@@ -245,19 +234,81 @@ class SimpleBM25:
     def __init__(self, k1: float = 1.5, b: float = 0.75):
         self.k1 = k1
         self.b = b
-        self.doc_freq = {}
-        self.idf = {}
-        self.avg_doc_len = 0
+        self.doc_freq = {}  # Term -> document frequency
+        self.idf = {}       # Term -> IDF value
+        self.total_docs = 0
         self.vocab_size = 10000  # Fixed vocabulary size for consistency
         
     def _tokenize(self, text: str) -> List[str]:
         """Simple tokenization."""
-        return re.findall(r'\b[a-zA-Z]+\b', text.lower())
+        # Include both English and Arabic characters
+        return re.findall(r'[a-zA-Z\u0600-\u06FF]+', text.lower())
     
     def _hash_token(self, token: str) -> int:
         """Hash token to fixed vocabulary space."""
         return hash(token) % self.vocab_size
     
+    def build_index_from_collection(self):
+        """Build document frequency index from the Qdrant collection."""
+        print("[bm25] Building IDF index from collection...")
+        
+        qdrant = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+        
+        # Get all documents to build IDF index
+        offset = 0
+        batch_size = 100
+        total_processed = 0
+        
+        while True:
+            response = qdrant.scroll(
+                collection_name=COLLECTION,
+                limit=batch_size,
+                offset=offset,
+                with_payload=True,
+                with_vectors=False
+            )
+            
+            points = response.points
+            if not points:
+                break
+            
+            # Process batch of documents
+            for point in points:
+                payload = point.payload or {}
+                text = payload.get("text", "")
+                tokens = set(self._tokenize(text))  # Use set to count unique terms per doc
+                
+                for token in tokens:
+                    idx = self._hash_token(token)
+                    self.doc_freq[idx] = self.doc_freq.get(idx, 0) + 1
+            
+            total_processed += len(points)
+            print(f"[bm25] Processed {total_processed} documents for IDF index...")
+            
+            if len(points) < batch_size:
+                break
+            
+            # Move to next batch
+            offset = points[-1].id
+            
+        # Calculate total number of documents
+        try:
+            collection_info = qdrant.get_collection(collection_name=COLLECTION)
+            self.total_docs = collection_info.points_count
+        except:
+            # Fallback to counted documents
+            self.total_docs = total_processed
+        
+        # Calculate IDF values
+        print(f"[bm25] Calculating IDF for {len(self.doc_freq)} unique terms across {self.total_docs} documents...")
+        for idx, df in self.doc_freq.items():
+            # Standard BM25 IDF formula: log((N - n + 0.5) / (n + 0.5))
+            idf_value = math.log((self.total_docs - df + 0.5) / (df + 0.5))
+            # Ensure positive IDF (handle edge cases)
+            self.idf[idx] = max(0.0, idf_value)
+        
+        print(f"[bm25] IDF index built successfully!")
+        
     def compute_sparse_vector(self, text: str) -> Tuple[List[int], List[float]]:
         """Compute sparse vector as (indices, values) for BM25."""
         tokens = self._tokenize(text)
@@ -270,17 +321,21 @@ class SimpleBM25:
             idx = self._hash_token(token)
             term_counts[idx] = term_counts.get(idx, 0) + 1
         
-        # Compute BM25-like scores (simplified)
+        # Compute BM25 scores
         doc_len = len(tokens)
         indices = []
         values = []
         
         for idx, freq in term_counts.items():
-            # Simplified BM25 score
             tf = freq
-            # Use log-based IDF approximation
-            idf = 1.0  # Simplified - in real BM25 this would be log((N - n + 0.5) / (n + 0.5))
-            score = idf * (tf * (self.k1 + 1)) / (tf + self.k1 * (1 - self.b + self.b * doc_len / 10))
+            # Use precomputed IDF if available, otherwise default to 1.0
+            idf = self.idf.get(idx, 1.0)
+            
+            # Standard BM25 formula
+            # score = IDF * (TF * (k1 + 1)) / (TF + k1 * (1 - b + b * doc_len / avg_doc_len))
+            # We'll use a reasonable average document length
+            avg_doc_len = 100  # Typical average document length in our dataset
+            score = idf * (tf * (self.k1 + 1)) / (tf + self.k1 * (1 - self.b + self.b * doc_len / avg_doc_len))
             
             indices.append(idx)
             values.append(score)
@@ -288,7 +343,9 @@ class SimpleBM25:
         return indices, values
 
 
+# Initialize BM25 (skip indexing for now to avoid server startup issues)
 bm25 = SimpleBM25()
+print("[bm25] Simple BM25 initialized (skipping full IDF index for now)")
 
 
 # ---- Simple Cross-Encoder Reranker ----
@@ -378,7 +435,7 @@ def embed_sparse(text: str) -> SparseVector:
     return SparseVector(indices=indices, values=values)
 
 
-def retrieve_hybrid(query_text: str, qvec: List[float]) -> List[Dict[str, Any]]:
+def retrieve_hybrid(query_text: str, qvec: List[float], reranker_enabled_override: Optional[bool] = None) -> List[Dict[str, Any]]:
     """Hybrid retrieval using both dense (embedding) and sparse (BM25) vectors.
     
     Configurable via environment variables:
@@ -387,6 +444,11 @@ def retrieve_hybrid(query_text: str, qvec: List[float]) -> List[Dict[str, Any]]:
     - TOP_K_FINAL: Final number of results after fusion (default: 6)
     - FUSION_TYPE: RRF or SCORE_FUSION (default: RRF)
     - RRF_K: RRF ranking constant (default: 60)
+    
+    Args:
+        query_text: The query text
+        qvec: Query vector
+        reranker_enabled_override: Optional override for reranker setting
     """
     from qdrant_client.http.models import Prefetch, FusionQuery, Fusion
     
@@ -437,12 +499,15 @@ def retrieve_hybrid(query_text: str, qvec: List[float]) -> List[Dict[str, Any]]:
     )
     print(f"[keyword] Retrieved {len(keyword_response.points)} keyword/BM25 hits")
     
+    # Use the override if provided, otherwise use the environment setting
+    reranker_enabled = reranker_enabled_override if reranker_enabled_override is not None else RERANKER_ENABLED
+    
     # Fuse results using configured fusion method
     response = qdrant.query_points(
         collection_name=COLLECTION,
         prefetch=prefetch,
         query=FusionQuery(fusion=fusion),
-        limit=RERANKER_TOP_K if RERANKER_ENABLED else TOP_K_FINAL,
+        limit=RERANKER_TOP_K if reranker_enabled else TOP_K_FINAL,
         with_payload=True,
     )
     hits = response.points
@@ -470,8 +535,8 @@ def retrieve_hybrid(query_text: str, qvec: List[float]) -> List[Dict[str, Any]]:
         print(f"  Rank {item['rank']:2d}: Page {item['page_number']:3d} | Score {item['score']:.4f} | {item['chunk_id'][:30]}...")
     
     # Apply reranking if enabled
-    print(f"\n[DEBUG] RERANKER_ENABLED={RERANKER_ENABLED}, len(out)={len(out)}")
-    if RERANKER_ENABLED and len(out) > 0:
+    print(f"\n[DEBUG] RERANKER_ENABLED={reranker_enabled}, len(out)={len(out)}")
+    if reranker_enabled and len(out) > 0:
         print(f"[reranker] Applying reranking to {len(out)} candidates...")
         out = reranker.rerank(query_text, out)
         
@@ -523,62 +588,10 @@ def retrieve(qvec: List[float]) -> List[Dict[str, Any]]:
     return out
 
 
-def compress_context(items: List[Dict[str, Any]]) -> str:
-    blocks = []
-    total = 0
-    for it in items:
-        t = " ".join(it["text"].split())
-        snippet = t[:MAX_CONTEXT_CHARS_PER_CHUNK]
-        block = (
-            f"[source: {it.get('source_file')} | page: {it.get('page_number')} | chunk_id: {it.get('chunk_id')}]\n"
-            f"{snippet}\n"
-        )
-        if total + len(block) > MAX_CONTEXT_TOTAL_CHARS:
-            break
-        blocks.append(block)
-        total += len(block)
-    return "\n".join(blocks)
+# compress_context function is now imported from rag_utils
 
 
-def deepseek_answer(question: str, context: str, history: str = "", previous_answer: str = "") -> str:
-    if not DEEPSEEK_API_KEY:
-        raise RuntimeError("Missing DEEPSEEK_API_KEY")
-
-    url = f"{DEEPSEEK_BASE_URL}/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
-        "Content-Type": "application/json",
-    }
-
-    system = SYSTEM_PROMPT
-    
-    # Build conversation-aware prompt with previous answer for follow-up questions
-    user_content_parts = []
-    
-    if history:
-        user_content_parts.append(f"Previous conversation:\n{history}")
-    
-    if previous_answer:
-        user_content_parts.append(f"My previous answer:\n{previous_answer}")
-    
-    user_content_parts.append(f"Document Context:\n{context}")
-    user_content_parts.append(f"Current question: {question}\n\nAnswer:")
-    
-    user_content = "\n\n".join(user_content_parts)
-
-    payload = {
-        "model": DEEPSEEK_MODEL,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user", "content": user_content},
-        ],
-        "temperature": 0.2,
-        "max_tokens": 200,
-    }
-
-    r = requests.post(url, headers=headers, json=payload, timeout=60)
-    r.raise_for_status()
-    return r.json()["choices"][0]["message"]["content"]
+# deepseek_answer function is now imported from rag_utils
 
 
 @app.get("/")
@@ -621,10 +634,14 @@ def ask(req: AskRequest, request: Request, user: Dict[str, Any] = Depends(requir
     # Get conversation history context
     history = get_history_context()
     
+    # Use request-specific config to override environment settings
+    reranker_enabled = req.config.get("reranker_enabled") if req.config else RERANKER_ENABLED
+    print(f"[config] Reranker enabled: {reranker_enabled} (request override: {req.config is not None})")
+    
     qvec = embed_query(question)
     # Use hybrid retrieval (dense + BM25 sparse)
     print(f"[hybrid] Searching for: {question[:50]}...")
-    items = retrieve_hybrid(question, qvec)
+    items = retrieve_hybrid(question, qvec, reranker_enabled_override=reranker_enabled)
     print(f"[hybrid] Found {len(items)} results using dense + BM25 RRF")
     
     if not items:

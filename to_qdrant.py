@@ -15,8 +15,9 @@ load_dotenv(dotenv_path=Path(__file__).with_name(".env"), override=True)
 
 
 # ---- Config (env-driven) ----
-EMBEDDING_SERVICE_TYPE = os.environ.get("EMBEDDING_SERVICE_TYPE", "openai").lower()
+EMBEDDING_SERVICE_TYPE = os.environ.get("EMBEDDING_SERVICE_TYPE", "local").lower()
 EMBEDDING_API_URL = os.environ.get("EMBEDDING_API_URL")  # required if aragemma
+LOCAL_EMBEDDING_MODEL = os.environ.get("LOCAL_EMBEDDING_MODEL", "intfloat/multilingual-e5-large")
 
 QDRANT_URL = os.environ.get("QDRANT_URL", "http://localhost:6333")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY") or None
@@ -46,41 +47,53 @@ def load_chunks(path: str) -> List[Dict[str, Any]]:
 
 
 def embed_single(text: str) -> List[float]:
-    """Get embedding for a single text using Aragemma API."""
-    payload = {"text": text}
-    r = requests.post(EMBEDDING_API_URL, json=payload, timeout=EMBED_TIMEOUT)
-
-    if r.status_code == 422:
-        print(f"[embed/aragemma] 422 response: {r.text[:1000]}")
-
-    r.raise_for_status()
-    data = r.json()
-
-    # Handle different response schemas
-    if "embedding" in data:
-        return data["embedding"]
-    if "embeddings" in data and len(data["embeddings"]) > 0:
-        return data["embeddings"][0]
-    if "data" in data and isinstance(data["data"], list) and len(data["data"]) > 0:
-        return data["data"][0].get("embedding", data["data"][0])
-
-    raise RuntimeError(f"Unexpected embedding response schema: {data}")
+    """Get embedding for a single text using either Aragemma API or local model."""
+    if EMBEDDING_SERVICE_TYPE == "aragemma":
+        if not EMBEDDING_API_URL:
+            raise RuntimeError("Missing EMBEDDING_API_URL for aragemma embedding service.")
+    
+        payload = {"text": text}
+        r = requests.post(EMBEDDING_API_URL, json=payload, timeout=EMBED_TIMEOUT)
+    
+        if r.status_code == 422:
+            print(f"[embed/aragemma] 422 response: {r.text[:1000]}")
+    
+        r.raise_for_status()
+        data = r.json()
+    
+        # Handle different response schemas
+        if "embedding" in data:
+            return data["embedding"]
+        if "embeddings" in data and len(data["embeddings"]) > 0:
+            return data["embeddings"][0]
+        if "data" in data and isinstance(data["data"], list) and len(data["data"]) > 0:
+            return data["data"][0].get("embedding", data["data"][0])
+    
+        raise RuntimeError(f"Unexpected embedding response schema: {data}")
+    elif EMBEDDING_SERVICE_TYPE == "local":
+        # Use local embedding model
+        try:
+            from sentence_transformers import SentenceTransformer
+            model = SentenceTransformer(LOCAL_EMBEDDING_MODEL)
+            # For multilingual-e5-large, we need to add a prefix
+            prefixed_text = f"query: {text}"
+            embedding = model.encode([prefixed_text])[0].tolist()
+            return embedding
+        except ImportError:
+            raise RuntimeError("Install sentence-transformers: pip install sentence-transformers")
+        except Exception as e:
+            raise RuntimeError(f"Local embedding failed: {e}")
+    else:
+        raise RuntimeError(
+            f"Unsupported EMBEDDING_SERVICE_TYPE='{EMBEDDING_SERVICE_TYPE}'. "
+            "Supported types: 'aragemma', 'local'."
+        )
 
 
 def embed_texts(texts: List[str]) -> List[List[float]]:
     """
-    Returns embeddings for a list of texts using Aragemma (HTTP endpoint).
-    The AraGemma API expects {"text": "single string"} and processes one text at a time.
+    Returns embeddings for a list of texts using either Aragemma API or local model.
     """
-    if EMBEDDING_SERVICE_TYPE != "aragemma":
-        raise RuntimeError(
-            f"Unsupported EMBEDDING_SERVICE_TYPE='{EMBEDDING_SERVICE_TYPE}'. "
-            "Set EMBEDDING_SERVICE_TYPE=aragemma."
-        )
-
-    if not EMBEDDING_API_URL:
-        raise RuntimeError("Missing EMBEDDING_API_URL for aragemma embedding service.")
-
     embeddings = []
     for i, text in enumerate(texts):
         for attempt in range(6):
@@ -89,13 +102,19 @@ def embed_texts(texts: List[str]) -> List[List[float]]:
                 embeddings.append(embedding)
 
                 if (i + 1) % 10 == 0:
-                    print(f"[embed/aragemma] processed {i + 1}/{len(texts)}")
+                    if EMBEDDING_SERVICE_TYPE == "aragemma":
+                        print(f"[embed/aragemma] processed {i + 1}/{len(texts)}")
+                    else:
+                        print(f"[embed/local] processed {i + 1}/{len(texts)}")
 
                 break
 
             except Exception as e:
                 wait = min(2 ** attempt, 30)
-                print(f"[embed/aragemma] error on text {i}: {e} | retrying in {wait}s")
+                if EMBEDDING_SERVICE_TYPE == "aragemma":
+                    print(f"[embed/aragemma] error on text {i}: {e} | retrying in {wait}s")
+                else:
+                    print(f"[embed/local] error on text {i}: {e} | retrying in {wait}s")
                 time.sleep(wait)
 
         else:
@@ -210,13 +229,13 @@ def estimate_avg_len(chunks: List[Dict[str, Any]]) -> float:
 def main() -> None:
     print("DEBUG ENV TYPE =", EMBEDDING_SERVICE_TYPE)
 
-    if EMBEDDING_SERVICE_TYPE != "aragemma":
+    if EMBEDDING_SERVICE_TYPE == "aragemma" and not EMBEDDING_API_URL:
+        raise RuntimeError("Missing EMBEDDING_API_URL env var (required for aragemma).")
+    elif EMBEDDING_SERVICE_TYPE not in ["aragemma", "local"]:
         raise RuntimeError(
             f"Unsupported EMBEDDING_SERVICE_TYPE='{EMBEDDING_SERVICE_TYPE}'. "
-            "Set EMBEDDING_SERVICE_TYPE=aragemma."
+            "Supported types: 'aragemma', 'local'."
         )
-    if not EMBEDDING_API_URL:
-        raise RuntimeError("Missing EMBEDDING_API_URL env var (required for aragemma).")
 
     print("[cfg] EMBEDDING_SERVICE_TYPE =", EMBEDDING_SERVICE_TYPE)
     print("[cfg] EMBEDDING_API_URL =", EMBEDDING_API_URL)
