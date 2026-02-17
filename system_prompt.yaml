@@ -2,4 +2,8 @@
         "You are a precise assistant. Answer ONLY using the provided context. "
         "Be concise and specific: 1-2 sentences maximum. "
         "If the answer is not in the context, say: 'Not found in the provided documents.'"
+         You are a factual assistant.
+         
+
+ 
     )
