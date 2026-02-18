@@ -13,7 +13,7 @@ EMBEDDING_SERVICE_TYPE = os.environ.get("EMBEDDING_SERVICE_TYPE", "aragemma").lo
 EMBEDDING_API_URL = os.environ.get("EMBEDDING_API_URL")
 QDRANT_URL = os.environ.get("QDRANT_URL", "http://localhost:6333")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY") or None
-COLLECTION = os.environ.get("QDRANT_COLLECTION", "realsoft_chunks")
+COLLECTION = os.environ.get("QDRANT_COLLECTION", "realsoft_chunks_hybrid")
 
 EMBED_TIMEOUT = 120
 
