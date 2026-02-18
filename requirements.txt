@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+qdrant-client
+sentence-transformers
+python-dotenv
+slowapi
+logfire
+pyyaml
+requests
